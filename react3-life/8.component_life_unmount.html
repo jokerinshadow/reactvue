@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./base/react.min.js"></script>
+    <script src="./base/react-dom.min.js"></script>
+    <script src="./base/browser.min.js"></script>
+</head>
+<style>
+    body {
+        height: 2000px;
+    }
+    #app {
+        position: fixed;
+    }
+   .world {
+       width: 100px;height: 100px;
+       border: 1px solid red;
+   }
+</style>
+<body>
+    <div id="app"></div>
+</body>
+<script type = "text/babel">
+
+    //当从渲染某组件变成了不渲染某组件，该组件就会经历销毁阶段
+    var Hello = React.createClass({
+        getInitialState () {
+            return {
+                isShow: true
+            }
+        },
+        toggle () {
+           this.setState({ isShow: !this.state.isShow }) 
+        },
+        render () { 
+            let { isShow } = this.state        
+            return (
+                <div>
+                    <button onClick = {this.toggle}>toggle</button>
+                    { isShow ? <World/> : '' }
+                </div>
+            )
+        }
+    })
+    var World = React.createClass({
+        componentWillUnmount () {// beforeDestory
+            //临死前的挣扎
+            //一般在这个钩子中，做一些擦屁股（善后）的事情, 释放内存空间...
+            //取消一些事件绑定， 停止一些计时器
+            console.log('componentWillUnmount')
+            window.removeEventListener('scroll', this.listenScroll)
+            clearInterval(this.timer)
+        },
+        getInitialState () {
+            return { color: 'red' }
+        },
+        render () {
+            return (
+                <div style = {{backgroundColor: this.state.color}} className = "world">
+                    
+                </div>
+            )
+        },
+        randomColor () {
+            return '#'+'0123456789abcdef'.split('').map(function(v,i,a){ 
+                return i>5 ? null : a[Math.floor(Math.random()*16)] }).join(''); 
+        },
+        componentDidMount () {
+            //监听滚动条变化，去更改状态
+            //注意，给window、document添加事情的时候，尽量用addEventListener，避免多个组件添加事件互相覆盖
+            this.timer = setInterval(() => {
+                console.log('time')
+                this.listenScroll()
+            }, 50)
+            window.addEventListener('scroll', this.listenScroll)
+        },
+        listenScroll () {
+            // console.log('scroll')
+            this.setState({color: this.randomColor()})
+        }
+    })
+
+    ReactDOM.render(<Hello/>,document.getElementById('app'))
+
+    // //直接改写a的点击事件的逻辑
+    // a.onclick = function () {
+    //     alert(1)
+    // }
+    // //给a的点击中加入一些事件处理程序
+
+    // a.addEventListener("click", function () {
+    //     alert(2)
+    // })
+
+
+
+</script>
+
+</html>

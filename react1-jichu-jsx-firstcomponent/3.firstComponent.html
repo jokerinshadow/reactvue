@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>第一个react组件</title>
+    <!-- react核心js，提供React对象 -->
+    <script src="./base/react.min.js"></script>
+    <!-- react核心js，提供ReactDOM对象 -->
+    <script src="./base/react-dom.min.js"></script>
+    <!-- 可以在浏览器端编译jsx代码 -->
+    <script src="./base/browser.min.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    <!-- <my-hello></my-hello>
+    <my-hello></my-hello> -->
+</body>
+
+<!-- react中有两个大版本，15,16,在这里，我们依靠15这个版本来学习基础知识 -->
+<!-- type = text/babel 是为了通知browser去进行编译 -->
+<script type = "text/babel">
+    //这是一个构造器，可以说这是一个类，在vue中叫组件
+    // Vue.component('my-hello', {})
+
+    //这是我们的第一个组件, 组件就是一个类，可以使用createClass来创建,在使用组件的时候其实相当于在实例化组件，真正使用的其实都是组件的实例
+    var Hello = React.createClass({
+        render () {//负责构建准备渲染的虚拟dom结构
+            // 在这里，我们使用jsx语法来构建组件的dom结构
+            // jsx语法是需要编译的，不能被浏览器直接识别，一般情况都是搭建webpack环境去进行编译，编译成  React.createElement 这种写法，在页面中引入的就直接是编译好的
+            //在这里，我们使用browser.js来进行客户端的编译
+            return (
+                <div>
+                    <div>
+                        <h1>Hello Chengdu!</h1>
+                    </div>
+                    <div>
+                        <input type = "text" />
+                        <h1>Hello Chengdu!</h1>
+                    </div>
+                </div>
+            )
+        }
+    })
+    //渲染组件，其实就是实例化组件，并且把实例的dom结构放入到页面中
+    //ReactDOM.render(Component,element)
+    ReactDOM.render(<Hello/>,document.querySelector('#app'))
+
+    
+    //不使用jsx语法
+    // var world = React.createElement('h1',{className:'abc',id:'haha'},[
+    //     React.createElement('span',null,'Hello'),
+    //     React.createElement('mark',null,'React')
+    // ])
+                
+    // //利用ReactDOM对象的render方法将组件渲染到某个节点里
+    // ReactDOM.render(world,document.getElementById("app"))
+
+
+</script>
+</html>

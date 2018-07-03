@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./base/react.min.js"></script>
+    <script src="./base/react-dom.min.js"></script>
+    <script src="./base/browser.min.js"></script>
+</head>
+<style>
+    .show{display: block;}
+    .hide{display: none;}
+</style>
+<body>
+    <p>页面不同显示还是需要有数据来控制</p>
+    <p>可以通过ref来对组件dom结构里的某一个dom做出标记，这样的话可以在组件内部通过this.refs来进行获取</p>
+    <hr>
+    <div id="app"></div>
+    
+
+
+    <script type="text/babel">
+        //1. 任何的大功能都是有小功能组合起来实现
+        //2. 任何小功能的实现就这么几步：
+        // * 找到关键数据
+        // * 让数据与视图建立联系
+        // * 根据情况在不同的场景去修改数据
+
+
+        // 更改的数据，且更改之后要重新渲染的数据放入到状态中
+        var DropDown = React.createClass({
+            getInitialState () {
+                //isShow代表默认显示的
+                return { isShow: true }
+            },
+            toggleList () {
+                //控制list显示隐藏的
+                this.setState({ isShow: !this.state.isShow })
+            },
+            renderList () {
+                //专门负责判断到底要渲染啥
+                let { isShow } = this.state
+                if ( !isShow) return '';
+                return <ul ><li>这是第一条数据</li><li>这是第二条数据</li></ul>;
+            },
+            render:function () {
+                //在react中会使用大量的解构赋值来取值
+                let { isShow } = this.state
+                return (
+                    <div>
+                        <button onClick = { this.toggleList }>toggle</button> 
+                        <ul style = {{ display: isShow?'block': 'none' }}><li>这是第一条数据</li><li>这是第二条数据</li></ul>                                     
+                        <hr/>
+                        <ul className = {isShow?'show': 'hide'}><li>这是第一条数据</li><li>这是第二条数据</li></ul>                                     
+                        <hr/>
+                        {
+                            isShow ? <ul ><li>这是第一条数据</li><li>这是第二条数据</li></ul>: ''
+                        }
+
+                        <hr/>
+                        { this.renderList() }
+                        
+                    </div>
+                )
+            }
+        })
+        ReactDOM.render(<DropDown/>,document.getElementById("app"))
+
+
+      
+        
+    </script>
+</body>
+</html>

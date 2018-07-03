@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./base/react.min.js"></script>
+    <script src="./base/react-dom.min.js"></script>
+    <script src="./base/browser.min.js"></script>
+</head>
+
+<style>
+  #big {
+      font-size: 3em;
+  }
+  *[data-red] { color: red; }
+
+  .bg-green {
+      background: green;
+  }
+</style>
+
+<body>
+    <p>样式：表达式{}里面写对象</p>
+
+    <div id="app"></div>
+
+    <script type="text/babel">
+        var Hello = React.createClass({
+            render: function () {
+                // jsx语法不是html也不是真正的xml，还是需要遵守一些js的规则
+                //关键字，保留字
+                //标签的属性全部都是按照js规则来的
+                //style的值要求是一个对象，类似与jquery的css方法
+                //在react中一个{}代表表达式
+                return (
+                    <div>
+                        <p style={ {"font-style": "italic"} } className="bg-green" data-red id="big"> Hello World </p>
+                    </div>
+                )
+            }
+        })
+
+        ReactDOM.render(<Hello/>,document.getElementById("app"))
+    </script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+    <script src="./base/react.min.js"></script>
+    <script src="./base/react-dom.min.js"></script>
+    <script src="./base/browser.min.js"></script>
+</head>
+<style>
+
+  .success h1{
+    color: rgb(16, 165, 73);
+  }
+  .success p{
+      color: rgb(50, 240, 129);
+  }
+
+  .danger h1{
+    color: rgb(211, 24, 24);
+  }
+  .danger p{
+      color: rgb(250, 83, 83);
+  }
+
+  .primary h1{
+    color: rgb(18, 129, 233);
+  }
+  .primary p{
+      color: rgb(142, 190, 252);
+  }
+
+</style>
+<body >
+    
+    
+
+   
+    <script type="text/babel">
+       var Box = React.createClass({
+           getInitialState () {
+                return { skin: 'default' }
+           },
+           changeSkin (skin) {//切换主题的方法
+                if ( skin === this.state.skin ) return false;
+                this.setState({ skin })
+           },
+           render:function () {
+               return (
+                   <div className = {this.state.skin}>    
+                        <Skin changeSkin = { this.changeSkin } />           
+                       <h1>hello world</h1>
+                       <p>同一个世界，同一个梦想</p>
+                       
+                   </div>
+               )
+           }
+       })
+       //主题切换组件
+      var Skin = React.createClass({
+            getInitialState () {
+                return {
+                    skins: [ 'success', 'danger', 'primary' ]
+                }
+            },
+           render:function () {
+               return (
+                   <div> 
+                       { 
+                           this.state.skins.map(item => (
+                               <button onClick = { this.props.changeSkin.bind(null, item) }>{item}</button>
+                           ))
+                       }                 
+                   </div>
+               )
+           }
+       })
+        
+        ReactDOM.render(<Box/>,document.body)
+
+        
+    </script>
+</body>
+</html>

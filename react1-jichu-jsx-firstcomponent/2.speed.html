@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="increment()">+</button>
+    <button onclick = "reduce()">-</button>
+    <div id="num"></div>
+    <div>这里是num：<span class="span"></span></div>
+
+    <!-- <div id="num">0</div> -->
+    
+    <!-- <div class="box">
+        <button id="btn">+</button>
+        <ul class="group">
+            <li class="group-item">1</li>
+            <li class="group-item">2</li>
+            <li class="group-item">3</li>
+        </ul>
+    </div> -->
+
+</body>
+
+<script>
+    //10000 * 4 = 40000
+    // console.time('temp') //60
+    // for (let i = 0; i < 10000; i++) {
+    //      let num = document.querySelector("#num").innerHTML;
+    //      num++;
+    //      document.querySelector("#num").innerHTML = num;
+    // }
+    // console.timeEnd('temp')
+
+    //2
+    // console.time('temp')//1
+    // var num = 0;
+    // var onum = document.querySelector("#num");
+    // for (let i = 0; i <10000; i++) {
+    //     num++;
+    // }
+    // onum.innerHTML = num;
+    // console.timeEnd('temp')
+
+    
+    //虚拟dom流程
+    //1. react会根据模板，创建虚拟dom结构
+
+    var vdom = {
+        tag: 'div',
+        attr: {
+            className: 'box'
+        },
+        content: [
+            { tag: 'button', attr: {id: 'btn',onClick: function(){}}, content: '+' },
+            { tag: 'ul', attr: {className: 'group'}, content: [
+                { tag: 'li', attr: {className: 'group-item'}, content: '1' },
+                { tag: 'li', attr: {className: 'group-item'}, content: '2' },
+                { tag: 'li', attr: {className: 'group-item'}, content: '3' }
+            ] }
+        ]
+    }
+
+
+    //2. 初始渲染
+
+    //3. 当用户点击按钮的时候，会操作数据，数据变化之后，生成一个新的虚拟dom数
+
+    var new_vdom = {
+        tag: 'div',
+        attr: {
+            className: 'box'
+        },
+        content: [ 
+            { tag: 'button', attr: {id: 'btn', className: 'active',onClick: function(){}}, content: '+' },
+            { tag: 'ul', attr: {className: 'group'}, content: [
+                { tag: 'li', attr: {className: 'group-item'}, content: '1' },
+                { tag: 'li', attr: {className: 'group-item'}, content: '2' },
+                { tag: 'li', attr: {className: 'group-item'}, content: '3' },
+                { tag: 'li', attr: {className: 'group-item'}, content: '4' }
+            ] }
+        ]
+    }
+
+    //4. 将新的虚拟dom与上一次的虚拟dom做出对比（使用diff算法）
+
+    //5. 将有变化的地方进行渲染
+
+    //6. 自行扩展 虚拟dom与diff算法
+
+
+    //MVC MVVM-声明式渲染、数据驱动： 页面中任何的视图变化，都应该由一条数据来操控
+    //关键数据
+    // var num = 0;
+    // //渲染数据的方法
+    // function renderNum() {
+    //     document.querySelector('#num').innerHTML = num
+    //     document.querySelector('.span').innerHTML = num
+    // }
+    // renderNum()
+    // //操控数据的方法 +
+    // function increment() {
+    //     num++;
+    //     renderNum();
+    // }
+    // //操控数据的方法- 
+    // function reduce() {
+    //     num--;
+    //     renderNum()
+    // }
+
+    // //虚拟dom 显示
+
+    // $(".a").hide()//虚拟dom 显示
+    // $(".a").show()
+    // $(".a").hide()
+    // $(".a").show() //虚拟dom 显示
+
+   
+</script>
+</html>

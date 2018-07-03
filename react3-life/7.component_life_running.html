@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./base/react.min.js"></script>
+    <script src="./base/react-dom.min.js"></script>
+    <script src="./base/browser.min.js"></script>
+</head>
+<style>
+   
+</style>
+<body>
+    
+    
+
+    <hr>
+    <div id="app"></div>
+    
+
+
+
+    <script type="text/babel">
+       //当初始化阶段执行完成后，会马上进入到运行中阶段，运行中阶段也有很多的钩子函数，但是这些钩子函数不会直接执行，而且有特殊的触发情况
+       
+       //当属性或者状态发生改变的时候才会触发这些钩子函数
+
+        var Father = React.createClass({
+            getInitialState () {
+                return {
+                    hitnum: 0//打儿子的次数
+                }
+            },
+            hitSon () {//打儿子的方法
+               this.setState({ hitnum: ++this.state.hitnum }) 
+            },
+            render () {
+                return (
+                    <div>
+                        <p>我是爸爸</p>
+                        <p> <button onClick = {this.hitSon}>打儿子</button> </p>
+                        <hr/>
+                        <Son hitnum = { this.state.hitnum } />
+                    </div>
+                )
+            }
+        })
+        var Son = React.createClass({
+            componentWillReceiveProps (props) {
+                //会在接收到的属性变化的时候执行
+                //作用：可以根据更改后的属性做出一些操作
+                //注意，在这里，只是接收了新属性，但是还没有挂载新属性，props参数就是新的属性
+                console.log('componentWillReceiveProps')
+                // console.log(this.props.hitnum, props)
+                if ( props.hitnum > 5 && !this.state.isHurt ) {
+                    this.setState({ isHurt: true })
+                }
+                
+            },
+            shouldComponentUpdate (props, state) {
+                //可以根据条件来判断，是否让组件更新
+                //设置为true就会更新，设置为false就不会更新,当我们不写这个钩子函数的时候，默认返回值为true
+                //主要用于性能优化， 因为在react中，不管是属性还是状态，哪怕从1变成1们看起来没有变化，但是react会认为以为变化了
+                //注意，在这个时候，属性和状态还是没有更新,最新的属性和状态需要从参数中获取
+                // if ( props.hitnum >5  ) return true;
+                if ( state.isHurt  ) return true;
+                return false;
+            },
+            componentWillUpdate () {// beforeUpdate 
+                //这个钩子函数没啥用处，不能更改状态，会死循环
+                //在这个时候真实dom还没有更新
+                //一般用于测试，输出下数据看一看之类的
+                console.log('componentWillUpdate')
+            },
+            getInitialState () {
+                return {
+                    isHurt: false//有没有受伤
+                }
+            },
+            render () {
+                console.log('render')
+                return (
+                    <div>
+                        <p>我是儿子</p>
+                        <p>爸爸打了我 { this.props.hitnum } 次</p>
+                        <p>我 {this.state.isHurt? '': '不'} 疼</p>
+                    </div>
+                )
+            },
+            componentDidUpdate () {// updated
+                //会在数据更新所引起的rerender结束后执行，因为在这个钩子中已经有了最新的dom，所以我们可以操作这些dom
+                //例如，当dom变化之后一些插件的更新、实例化都可以写在这里
+                console.log('componentDidUpdate')
+            }
+        })
+
+        ReactDOM.render(<Father/>, document.querySelector('#app'))
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="./base/react.min.js"></script>
+    <script src="./base/react-dom.min.js"></script>
+    <script src="./base/browser.min.js"></script>
+</head>
+<body>
+    <div id="app">
+
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/babel">
+        //组件的划分，数据结构的设计一定要考虑到以后的更新和维护
+        //数据列表渲染，在vue中使用v-for进行，在react中我们使用数组的map方法进行
+        var MovieBox = React.createClass({
+            getInitialState () {//状态
+                return { 
+                    citys: [
+                        {id: 1, title: '北京'}, 
+                        {id: 2, title: '上海'}, 
+                        {id: 3, title: '成都'}, 
+                        {id: 4, title: '大同'}
+                    ],
+                    activeId: 1
+                }
+            },
+            // shouldComponentUpdate (props, state) {
+            //     //阻止相同的状态变化后rerender
+            //     if ( state.activeId === this.state.activeId ) return false;
+            //     return true;
+            // },
+            changeActiveId (id) {//点击按钮时更改当前城市
+                // return () => {
+                    if ( id === this.state.activeId ) return false;
+                    this.setState({activeId: id})
+                // }
+            },
+            renderButtons () {//负责生成button数组的，准备渲染
+                let { citys, activeId } = this.state
+                return citys.map(item => (<button onClick = {this.changeActiveId.bind(null, item.id)} className={"btn btn-" + (item.id === activeId? 'danger':'default')}>{ item.title }</button>));
+            },
+            filterCityById () {//根据当前的城市id来获取城市名字
+                let { activeId, citys } = this.state
+                return citys.filter(item => {
+                    if ( item.id === activeId ) return true;
+                    return false;
+                })[0].title
+            },
+            render () {
+                console.log('render')
+                return (
+                    <div className="container">
+                        <div className="panel panel-primary">
+                            <div className="panel-heading">
+                                { this.renderButtons() }
+                            </div>
+                            <MovieList city = { this.filterCityById() } />
+                        </div>
+                    </div>
+                )
+            }
+        })
+        //  http://api.douban.com/v2/movie/in_theaters  jsonp
+        var MovieList = React.createClass({
+            getInitialState () {
+                return {
+                    title: '',//标题
+                    movie_list: []//存放电影列表的状态
+                }
+            },
+            getMovieList (city) {//获取电影数据的方法
+                $.ajax({
+                    url: 'http://api.douban.com/v2/movie/in_theaters',
+                    data: { city: city || this.props.city },
+                    dataType: 'jsonp',
+                    success: results => {
+                        this.setState({
+                            title: results.title,
+                            movie_list: results.subjects
+                        })
+                        console.log(results)
+                    }
+                })
+            },
+            componentWillReceiveProps (props) {
+                
+                //当城市变化的时候，去重新获取数据
+                //这样的判断，可以避免其他属性变化的影响，而且避免从成都到成都这样的变化也去获取数据
+                if ( this.props.city !== props.city ) {
+                    console.log(props.city)
+                    this.getMovieList(props.city)
+                }
+            },
+            componentDidMount () {
+                //组件装载完成后，进行数据的获取
+                this.getMovieList()
+            },
+            renderItems () {//根据电影数据来循环电影item
+                return this.state.movie_list.map(item => (
+                    <MovieItem data = { item } />
+                ))
+            },
+            render () {
+                return (                   
+                    <div className="panel-body">
+                        <h3>{ this.state.title }</h3>
+                        <ul className="list-group">
+                            { this.renderItems() }
+                        </ul>
+                    </div>
+                )
+            }
+        })
+        //电影元素组件
+        var MovieItem = React.createClass({
+            render () {
+                //接收到电影列表组件传入的对应的电影信息，进行渲染
+                let { title } = this.props.data
+                return (                   
+                    <li className="list-group-item">
+                        { title }
+                    </li>                        
+                )
+            }
+        })
+
+
+        ReactDOM.render(<MovieBox/>, document.querySelector('#app'))
+
+
+        //数组的map的方式：es5的方法
+        //可以遍历数组，并且能返回一个新数组，并且新数组里的元素是由当前数组的元素处理之后的结果
+        // var arr = [2,8,14,6,9]
+        // //需求，根据arr生成一个新数组，新数组里的元素为arr数组里元素二分之一 [1,4,7,3,4.5]
+
+        // var new_arr = arr.map((item, i) => {
+        //     console.log(item, i)
+        //     //返回什么，就相当于给新数组放入什么
+        //     return item/2
+        // })
+        // console.log(new_arr)
+
+
+        //数组的filter方法：
+        //可以遍历数组，并且能返回一个新数组，在每次遍历的函数中可以选择返回true还是false，如果是true的话，当前的元素就会放入新数组中
+        // var arr = [1,2,3,4,5,6]
+        // //请取出arr中所有的偶数
+        // var new_arr = arr.filter(item => {
+        //     if ( item%2 === 0 ) return true;
+        //     return false
+        // })
+
+        // console.log(new_arr)
+
+
+        // var a = function (num) {
+        //     console.log(num)
+        //     return num*2
+        // }
+
+        // var a = num => num * 2;
+        // bind 
+
+        
+        // var b = a.bind(null)
+
+        
+
+    </script>
+
+    <script>
+        //bind里面如果把指针传为null，就相当于不改变this
+        //bind也可以为新函数传入参数
+        // function a(num) {
+        //     alert(num * 2)
+        // };
+        // a();
+        // a = a.bind(1);
+        // a();
+        // var b = a.bind(null, 2)
+        // b();
+    </script>
+   
+</body>
+</html>

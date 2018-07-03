@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./base/react.min.js"></script>
+    <script src="./base/react-dom.min.js"></script>
+    <script src="./base/browser.min.js"></script>
+</head>
+<body>
+
+    <div id="app"></div>
+
+    <script src="https://cdn.bootcss.com/vue/2.5.16/vue.min.js"></script>
+    <script type="text/babel">
+    //在vue中，我们想要通过更改数据来改变视图的时候，直接修改就可以，例如：this.doing = '学习'
+    //因为在vue中，我们的数据都会被处理之后挂载在实例上,利用Object.defineProperty来对我们想要添加上实例上的属性做出处理，处理之后会设置到实例的$data上，$data上的属性有自己对应的getter和setter,当我们修改数据的时候，这条数据对应的setter就会执行，这个时候就会触发实例里的一个专门的watcher会执行，也就是实例就知道数据被更改了，那么实例就会创建新的虚拟dom结构，与上一次的虚拟dom进行对比，更新需要更新的地方
+
+    // var obj = {}
+    // Object.defineProperty(obj, 'name', {
+    //     get:function () {//getter
+    //         //在使用值的时候会触发，需要有返回值，返回值为什么，这个属性值就是什么
+    //        console.log('get') 
+    //        return '二狗子'
+    //     },
+    //     set:function () {//setter
+    //         //在修改的时候触发
+    //         console.log('setter')
+    //     }
+    // })
+
+    // obj.name = '大狗子'
+
+    // var vm = new Vue({
+    //     data: {a:1, b:2}
+    // })
+    // console.log(vm)
+
+
+        //在react中，因为没有所谓getter，setter，所以我们直接修改状态的话，组件不知道，所以不会重新render
+
+        //所以在react中，如果想要修改状态的话，需要使用专门setState的方法
+        var Gouzi = React.createClass({  
+            getInitialState () {
+                //初始状态
+                return {
+                    doing: '玩游戏',
+                    num:0
+                }
+            },    
+            toggleState () {
+                //同步方法：在传入的options中以键值对的方式设置新的状态
+                // this.setState({ doing: '学习' })
+                //异步方法
+                this.setState((previousState) => {
+                    return { doing: previousState.doing === '学习'? '玩游戏' : '学习' }
+                })
+            }, 
+            render:function () {
+                return (
+                    <div>
+                        <button onClick = {this.toggleState}>切换状态</button>
+                        <p>我正在{this.state.doing}</p>
+                    </div>
+                )
+            }
+        })
+
+        ReactDOM.render(<Gouzi knowledge = {'英语'} />,document.getElementById("app"))
+    </script>
+</body>
+</html>
